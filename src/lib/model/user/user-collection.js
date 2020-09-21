@@ -31,8 +31,11 @@ class User {
     }
   }
 
-  async findAll() {
-    return await this.schema.find({});
+  async findAll(username){
+    let queryParam = username ? {
+      username,
+    } : {};
+    return await this.schema.find(queryParam);
   }
 
   async authenticateBasic(username, password) {
