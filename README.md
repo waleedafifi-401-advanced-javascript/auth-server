@@ -9,11 +9,15 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
 - [POST] http://localhost:3000/signup
 - [POST] http://localhost:3000/signin
 - [GET] http://localhost:3000/users
+- [GET] http://localhost:3000/
 
 #### `.env` 
 - PORT=3000
 - MONGO_URL=mongodb://localhost:27017/auth
 - SECRET=WaleedAfifi
+- GITHUB_CLIENT_ID=
+- GITHUB_CLIENT_SECRET=
+
 
 ### Modules
 - server.js
@@ -24,6 +28,7 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
    - 404.js
    - 500.js
    - middlewware
+   - oauth.js
 - route.js
 
 ### Packages
@@ -53,4 +58,4 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
 - Jest test: `npm test` 
 
 #### UML
-![UML](./img/uml.jpg)
+![UML](./img/uml1.jpg)
