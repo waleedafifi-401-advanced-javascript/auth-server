@@ -10,6 +10,8 @@ const notFound = require('./middleware/404.js');
 const errorServer = require('./middleware/500.js');
 
 const router = require('./auth/route');
+const extraRoutes = require('./auth/extra-routes');
+
 
 app.use(cors());
 app.use(morgan('dev'));
@@ -19,6 +21,7 @@ app.use(express.urlencoded({
 }));
 
 app.use(router);
+app.use(extraRoutes);
 
 app.get('/bad', (req, res, next) => {
   res.status(500).json('Error!!');

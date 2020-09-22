@@ -9,7 +9,9 @@ const users = require('../lib/model/user/user-collection');
 router.post('/signup', async (req, res, next) => {
   try {
     users.create(req.body).then( result => {
-      res.status(201).send(`Created user: ${result}`);
+      let token = users.generateToken(result);
+      res.body = {result, token};
+      res.status(201).send({token, result});
     });
   } catch (e) {
     res.status(403).send('Error creating user');

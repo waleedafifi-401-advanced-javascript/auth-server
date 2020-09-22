@@ -10,6 +10,8 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
 - [POST] http://localhost:3000/signin
 - [GET] http://localhost:3000/users
 - [GET] http://localhost:3000/
+- [GET] http://localhost:3000/secret
+   - must send Bearer token to authenticate the user if its allows to see the content or not
 
 #### `.env` 
 - PORT=3000
@@ -29,7 +31,15 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
    - 500.js
    - middlewware
    - oauth.js
-- route.js
+   - bearer-auth.js
+- routes
+   - route.js
+   - extra-routes.js
+- __test__
+   - bearer-auth.test.js
+   - extra-routes.test.js
+   - server.test.js
+   - users-model.test.js
 
 ### Packages
 - @code-fellows/supergoose
@@ -58,4 +68,4 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
 - Jest test: `npm test` 
 
 #### UML
-![UML](./img/uml1.jpg)
+![UML](./img/uml2.jpg)
