@@ -22,16 +22,15 @@ class User {
         console.log('new record:', newRecord);
         return newRecord.save();
       } else {
-        return this.generateToken({
-          result,
-        });
+        return [this.generateToken({ result }), result];
       }
     } catch (err) {
       return err;
     }
   }
 
-  async findAll(username){
+  async findAll(username) {
+    console.log(username);
     let queryParam = username ? {
       username,
     } : {};
@@ -47,12 +46,15 @@ class User {
 
     console.log(user);
 
+    if(!user) {
+      return null;
+    }
     let compare = await this.comparePasswords(user, password);
 
     console.log(compare);
 
     if (user && compare) {
-      let signed = await this.generateToken();
+      let signed = await this.generateToken(user);
       return {
         token: signed,
         user: user,
@@ -69,12 +71,29 @@ class User {
     return valid ? this : Promise.reject();
   }
 
-  generateToken() {
+  generateToken(user) {
+    console.log(user.username);
     const signed = jwt.sign({
-      id: this._id,
+      username: user.username,
+      role: user.role,
     }, process.env.SECRET);
     return signed;
   }
+
+  async authenticateToken(token) {
+    try {
+      let userToken = await jwt.verify(token, process.env.SECRET);
+
+      console.log(userToken);
+      let inDb = await this.findAll(userToken.username);
+
+      return inDb ? Promise.resolve(inDb) : Promise.reject();
+
+    } catch (e) {
+      return Promise.reject();
+    }
+  }
+
 }
 
 module.exports = new User();
