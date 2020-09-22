@@ -55,8 +55,8 @@ it('creating an existing user returns user', async () => {
 
   const foundOrCreated = await User.create(user);  
   
-  expect(foundOrCreated[1].username).toBe(user.username);
-  expect(foundOrCreated[1].password).toBe(user.password);
+  expect(foundOrCreated.result.username).toBe(user.username);
+  expect(foundOrCreated.result.password).toBe(user.password);
 
 });
 

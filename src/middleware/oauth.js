@@ -6,15 +6,16 @@ const users = require('../lib/model/user/user-collection');
 module.exports = async (req, res, next) => {
   try {
     const code = await req.query.code;
+    console.log('__code__', code);
 
     let token = await getToken(code);
-
-    let dbToken = await getTokenFromDB();
+    console.log('__token__', token);
 
     let oauthUser = await userResponse(token);
+    console.log('__oauthUser__', oauthUser);
 
-    // console.log(oauthUser);
-
+    let dbToken = await getTokenFromDB(oauthUser);
+    console.log('__dbToken__', dbToken);
 
     // let allUsers = await users.findAll();
 
@@ -43,7 +44,7 @@ module.exports = async (req, res, next) => {
       } else {
         // Make a token for req obj for user already in db
         // console.log('heeeere');
-        // console.log(result[0]);
+        console.log(result[0]);
         req.token = dbToken;
         req.user = result[0];
         next();
@@ -59,8 +60,9 @@ module.exports = async (req, res, next) => {
   }
 };
 
-async function getTokenFromDB() {
-  return await users.generateToken();
+async function getTokenFromDB(oauthUser) {
+  let obj = { username: oauthUser.login };
+  return await users.generateToken(obj);
 }
 
 async function getToken(code) {

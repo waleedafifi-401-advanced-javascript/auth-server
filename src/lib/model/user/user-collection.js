@@ -10,7 +10,7 @@ class User {
     this.schema = schema;
   }
   async create(record) {
-    // console.log(record);
+    console.log(record);
     try {
       const result = await this.schema.findOne({
         username: record.username,
@@ -22,7 +22,8 @@ class User {
         console.log('new record:', newRecord);
         return newRecord.save();
       } else {
-        return [this.generateToken({ result }), result];
+        let token = this.generateToken(result);
+        return { token, result };
       }
     } catch (err) {
       return err;
@@ -30,10 +31,10 @@ class User {
   }
 
   async findAll(username) {
-    console.log(username);
     let queryParam = username ? {
       username,
     } : {};
+    console.log(queryParam);
     return await this.schema.find(queryParam);
   }
 
@@ -44,11 +45,12 @@ class User {
 
     let user = await this.schema.findOne(query);
 
-    console.log(user);
-
     if(!user) {
       return null;
     }
+
+    console.log(user);
+
     let compare = await this.comparePasswords(user, password);
 
     console.log(compare);
@@ -72,8 +74,8 @@ class User {
   }
 
   generateToken(user) {
-    console.log(user.username);
     const signed = jwt.sign({
+      id: user._id,
       username: user.username,
       role: user.role,
     }, process.env.SECRET);
@@ -82,18 +84,20 @@ class User {
 
   async authenticateToken(token) {
     try {
-      let userToken = await jwt.verify(token, process.env.SECRET);
+      let tokenObject = jwt.verify(token, process.env.SECRET);
 
-      console.log(userToken);
-      let inDb = await this.findAll(userToken.username);
-
-      return inDb ? Promise.resolve(inDb) : Promise.reject();
+      console.log(tokenObject);
+      if (tokenObject.username) {
+        let inDb = await this.findAll(tokenObject.username);
+        return inDb ? Promise.resolve(inDb) : Promise.reject();
+      } else {
+        return Promise.reject();
+      }
 
     } catch (e) {
+      console.log(e);
       return Promise.reject();
     }
   }
-
 }
-
 module.exports = new User();
