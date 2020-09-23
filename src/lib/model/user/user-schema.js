@@ -23,6 +23,11 @@ const users = mongoose.Schema({
     default: 'user',
     enum: ['admin', 'writer', 'editor', 'user'],
   },
+  capabilities: {
+    type: Array,
+    default: [],
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('users', users);

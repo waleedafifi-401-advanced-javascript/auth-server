@@ -10,8 +10,13 @@ module.exports = async (req, res, next) => {
   let token = req.headers.authorization.split(' ').pop();
 
   try {
-    const user = await User.authenticateToken(token);
-    req.user = user;
+    const users = await User.authenticateToken(token);
+    console.log(users);
+    req.user = {
+      username: users.username,
+      role: users.role,
+      capabilities: users.capabilities,
+    };
     next();
   } catch (e) {
     next('Invalid Login');

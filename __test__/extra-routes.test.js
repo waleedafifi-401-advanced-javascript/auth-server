@@ -22,6 +22,21 @@ it('should allow entry with good token', async () => {
   expect(response.status).toBe(200);
 });
 
+it('should allow entry with good token', async () => {
+  const userData = {
+    username: 'waleed_test',
+    password: '1234',
+    role: 'admin',
+  };
+  const results = await mockRequest.post('/signup').send(userData);
+  console.log("results.body: ", results.body.token);
+
+  const response = await mockRequest.get('/private').auth(results.body.token, {
+    type: 'bearer',
+  });
+  expect(response.status).toBe(200);
+});
+
 it('should NOT allow entry with bad token', async () => {
   const response = await mockRequest.get('/secret').auth('bad token', {
     type: 'bearer',
