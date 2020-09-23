@@ -2,7 +2,10 @@
 
 **Author**: _Waleed A. Afifi_
 
-Authentication System **Phase 1**: Deploy an Express server that implements Basic Authentication, with signup and signin capabilities, using a Mongo database for storage.
+Authentication Server **Phase 4**: Role Based Access Control
+
+Being able to login is great. But controlling access at a more granular level is vital to creating a scalable system. In this lab, you will implement Role Based Access Control (**RBAC**) using an Access Control List (**ACL**), allowing to not only restrict access to routes for valid users, but also based on the individual permissions we give each user.
+
 
 
 #### Routs
@@ -12,6 +15,17 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
 - [GET] http://localhost:3000/
 - [GET] http://localhost:3000/secret
    - must send Bearer token to authenticate the user if its allows to see the content or not
+- [GET] http://localhost:3000/private
+   - must send Bearer token to authenticate the user if its allows to see the content or not
+- [POST] http://localhost:3000/create
+   - must send Bearer token to authenticate the user if its allows to see the content or not and must has the create capabilities
+- [DELETE] http://localhost:3000/delete
+   - must send Bearer token to authenticate the user if its allows to see the content or not and must has the delete capabilities
+- [PUT] http://localhost:3000/update
+   - must send Bearer token to authenticate the user if its allows to see the content or not and must has the update capabilities
+- [GET] http://localhost:3000/readonly
+   - must send Bearer token to authenticate the user if its allows to see the content or not and must has the read capabilities
+
 
 #### `.env` 
 - PORT=3000
@@ -32,6 +46,7 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
    - middlewware
    - oauth.js
    - bearer-auth.js
+   - authorize.js
 - routes
    - route.js
    - extra-routes.js
@@ -68,4 +83,4 @@ Authentication System **Phase 1**: Deploy an Express server that implements Basi
 - Jest test: `npm test` 
 
 #### UML
-![UML](./img/uml2.jpg)
+![UML](./img/uml3.jpg)

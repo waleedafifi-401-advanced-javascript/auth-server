@@ -3,12 +3,16 @@
 const schema = require('./user-schema');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 require('dotenv').config();
+
+const MINUTES = 15;
 
 class User {
   constructor() {
     this.schema = schema;
   }
+
   async create(record) {
     console.log(record);
     try {
@@ -20,10 +24,29 @@ class User {
         const newRecord = new this.schema(record);
         newRecord.password = await bcrypt.hash(newRecord.password, 5);
         console.log('new record:', newRecord);
+
+        // if (newRecord.role) {
+        const roleMap = {
+          user: 1,
+          writer: 2,
+          editor: 3,
+          admin: 4,
+        };
+        const capabilities = ['read', 'create', 'update', 'delete'];
+        const allowedForThisUser = [];
+        for (let i = 0; i < roleMap[newRecord.role]; i++) {
+          allowedForThisUser.push(capabilities[i]);
+        }
+        newRecord.capabilities = allowedForThisUser;
+        // }s
+
         return newRecord.save();
       } else {
         let token = this.generateToken(result);
-        return { token, result };
+        return {
+          token,
+          result,
+        };
       }
     } catch (err) {
       return err;
@@ -45,7 +68,7 @@ class User {
 
     let user = await this.schema.findOne(query);
 
-    if(!user) {
+    if (!user) {
       return null;
     }
 
@@ -78,18 +101,25 @@ class User {
       id: user._id,
       username: user.username,
       role: user.role,
+      capabilities: user.capabilities,
+      expiresIn: 900000,
     }, process.env.SECRET);
     return signed;
   }
 
   async authenticateToken(token) {
+    console.log(token);
+
     try {
       let tokenObject = jwt.verify(token, process.env.SECRET);
 
-      console.log(tokenObject);
+      if (Date.now() / 1000 - tokenObject.iat > 60 * MINUTES) {
+        return Promise.reject('Token expired');
+      }
+
       if (tokenObject.username) {
         let inDb = await this.findAll(tokenObject.username);
-        return inDb ? Promise.resolve(inDb) : Promise.reject();
+        return inDb ? Promise.resolve(inDb[0]) : Promise.reject();
       } else {
         return Promise.reject();
       }
